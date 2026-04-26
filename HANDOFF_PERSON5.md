@@ -47,30 +47,31 @@ Just copy and paste the massive block of text below into an advanced AI (like Cl
 > - The final, verified F1 score of the Hybrid model is 55.4% (which officially beats the LSTM's 54.3% and the Physiological baseline's 37.7%).
 >
 > **Task Overview:**
-> Please write the complete `app.py` code to build a stunning, "Google-Material" style minimal medical dashboard. I want true widescreen layouts, smooth native Streamlit containers, and interactive Plotly charts.
+> Please write the complete `app.py` code to build a stunning, "Google-Material" style minimal medical dashboard. I want true widescreen layouts, smooth native Streamlit containers (`border=True`), and interactive Plotly charts.
 > 
-> **Exact UI Layout & Features Required:**
-> 1. **Page Config**: Set the layout to `"wide"` and use a heart emoji icon.
+> **Exact UI Layout & Features Required (MUST MATCH EXACTLY):**
+> 1. **Page Config**: Set the layout to `"wide"`. Add this exact CSS via `st.markdown` to remove the default `max-width` and apply Google Sans/Segoe UI fonts:
+>    `<style>.block-container { padding-top: 2rem; padding-bottom: 2rem; } h1, h2, h3 { font-family: 'Segoe UI', Roboto, sans-serif; font-weight: 500; color: #202124; } p { color: #5f6368; }</style>`
 > 2. **Sidebar (`st.sidebar`)**: 
->    - Add a sleek title and project subtitle.
->    - Create a select box to choose the Patient `record_id`. (Important: Flag patients 102, 107, 109, 111, and 212 as "Pacemaker" in the dropdown).
->    - Add a toggle switch to "Show Raw LSTM/Physio Models" on the timeline.
->    - Hardcode a small markdown section showing our final global F1 scores: Physio 37.7%, LSTM 54.3%, Hybrid 55.4%.
+>    - Add a title and project subtitle.
+>    - Select box to choose the Patient `record_id`. (Important: Flag patients 102, 107, 109, 111, and 212 as "Pacemaker" in the dropdown).
+>    - A toggle switch to "Show Raw LSTM/Physio Models" on the timeline (defaults to True).
+>    - Hardcode a markdown section showing our final global F1 scores: Physio 37.7%, LSTM 54.3%, Hybrid 55.4%.
 > 3. **Top Metrics Row (`st.columns(4)`)**: 
 >    - Display 4 KPI metric cards: Total Beats, Abnormal Beats (count + %), Normal Beats (count + %), and Average Hybrid Risk Score. Color the Risk Score metric red if > 0.5.
 > 4. **Main Timeline (`st.container(border=True)`)**:
->    - A large Plotly line graph plotting the `hybrid_score` over the `beat_index`. 
->    - Use `fill="tozeroy"` to give the hybrid score line a nice shaded area beneath it.
->    - Add a red dashed horizontal threshold line at `y=0.5`.
->    - If the user toggled the raw models on, plot the `lstm_score` and `phys_score` as faint, dotted lines in the background.
-> 5. **Analytics Grid (`st.columns(2)` - DO NOT use 3 columns to avoid horizontal cutoff)**:
->    - Create a 2x2 grid using `st.container(border=True)` for each cell. Set all Plotly chart heights to `320px` to prevent legends from getting cut off.
->    - **Top-Left**: An Arrhythmia Breakdown Horizontal Bar Chart.
->    - **Top-Right**: An Overall Risk Gauge (0-100%, coloring Green/Yellow/Red based on the average hybrid score).
->    - **Bottom-Left**: A Beat Status Donut/Pie chart (Normal vs Abnormal).
->    - **Bottom-Right**: A Markdown/Dataframe table proudly displaying the Global Performance comparison (Physio vs LSTM vs Hybrid Weighted). Highlight the Hybrid row.
+>    - Plotly line graph (`go.Figure()`) plotting `hybrid_score` over `beat_index`. Use `fill="tozeroy"` and color `#0f9d58`.
+>    - If the "Show Raw" toggle is on, plot `lstm_score` and `phys_score` as dotted lines (`dash="dot"`).
+>    - Add a horizontal threshold line at `y=0.5` using `#db4437`. Plotly layout should use `template="plotly_white"` and `height=350`.
+> 5. **Analytics Grid (MUST USE `st.columns(2)` - DO NOT use 3 columns)**:
+>    - Create a 2x2 grid using two rows of `st.columns(2)`. Wrap every chart in `with st.container(border=True):`. Set ALL chart heights to `320px`.
+>    - **Row 1, Left**: Arrhythmia Breakdown Horizontal Bar Chart (`px.bar`).
+>    - **Row 1, Right**: Overall Risk Gauge using `go.Indicator(mode="gauge+number")`. Ranges: 0-35 (Green `#e6f4ea`), 35-50 (Yellow `#fef7e0`), 50-100 (Red `#fce8e6`).
+>    - **Row 2, Left**: Beat Status Pie chart (`hole=0.6`). Colors: Normal `#0f9d58`, Abnormal `#db4437`.
+>    - **Row 2, Right**: Global Performance DataFrame hardcoded (Models: Physio, LSTM, Hybrid LR, Hybrid Weighted). Highlight the Hybrid Weighted 55.4% row with `background-color: #e6f4ea`.
 > 6. **Data Table (`st.container(border=True)`)**:
->    - A clinical dataframe at the bottom displaying the raw beat-by-beat data. Use Pandas styling to highlight rows with a red background if the `final_label` is 'abnormal'.
+>    - A `st.radio` filter for ["All", "Abnormal", "Normal"].
+>    - Display the filtered dataframe using `st.dataframe`. Use Pandas `.style.apply` to highlight rows light red (`#fce8e6`) if `final_label` == 'abnormal'.
 > 
 > **Performance Constraints:**
 > The CSV is nearly 30MB. You MUST use `@st.cache_data` for the CSV loading functions so the app doesn't crash on reload. 
