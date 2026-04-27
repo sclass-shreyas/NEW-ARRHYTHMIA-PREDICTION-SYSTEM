@@ -114,7 +114,7 @@ row1_col1, row1_col2 = st.columns(2)
 with row1_col1:
     with st.container(border=True):
         st.write("**Arrhythmia Breakdown**")
-        breakdown = p_df['Arrhythmia Type'].value_counts().reset_index()
+        breakdown = p_df['arrhythmia_type'].value_counts().reset_index()
         fig_bar = px.bar(breakdown, x='count', y='arrhythmia_type', orientation='h',
                          color_discrete_sequence=['#4285f4'])
         fig_bar.update_layout(height=320, margin=dict(l=0, r=0, t=0, b=0), template="plotly_white")
