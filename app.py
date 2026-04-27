@@ -35,7 +35,7 @@ except FileNotFoundError:
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("IEEE Project")
+    st.title("ARRHYTHMIA DETECTION SYSTEM")
     st.subheader("Hybrid Cardiac Digital Twin")
     st.divider()
     
